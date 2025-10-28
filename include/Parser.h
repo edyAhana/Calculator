@@ -6,12 +6,12 @@
 
 class Parser {
 private:
-    using tokens = std::vector<BinaryTree::Token>;
+    using tokens = std::vector<Token>;
 
-    bool lexicalAnalyser(std::string expression);
-    tokens tokinizer(std::string_view expression);
-    BinaryTree syntacticAnalyser(const tokens& tokens);
-    bool sintaticAnalyser(const BinaryTree& syntacticTree);
+    static bool lexicalAnalyser(std::string_view expression);
+    static tokens tokinizer(std::string_view expression);
+    static BinaryTree getAbstractSyntaxTree(const tokens& tokens);
+    static bool sintaticAnalyser(const BinaryTree& syntacticTree);
 public:
     static BinaryTree Parse(std::string_view expression); 
 };

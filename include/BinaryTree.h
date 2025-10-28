@@ -4,19 +4,23 @@
 #include <memory>
 #include <string>
 
+struct Token {
+    enum class Type {
+        UnOperator,
+        BinOperator,
+        Number,
+        LeftBracket,
+        RightBraket,
+    };
+    
+    Type type;
+    std::string_view token;
+};
+
 class BinaryTree {
 public:
     using Pointer = std::shared_ptr<BinaryTree>;
 
-    struct Token {
-        enum class Type {
-            Operator,
-            Number,
-        };
-        
-        Type type;
-        std::string token;
-    };
 
 private:
     Token token;
