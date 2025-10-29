@@ -8,10 +8,10 @@ class Parser {
 private:
     using tokens = std::vector<Token>;
 
-    static bool lexicalAnalyser(std::string_view expression);
     static tokens tokinizer(std::string_view expression);
-    static BinaryTree getAbstractSyntaxTree(const tokens& tokens);
-    static bool sintaticAnalyser(const BinaryTree& syntacticTree);
+    static BinaryTree::Pointer getAbstractSyntaxTree(const tokens& tokens);
+    static std::size_t getPriority(const Token& token);
+    static BinaryTree::Pointer getAbstractSyntxTreeHelper(const tokens& tokens);
 public:
     static BinaryTree Parse(std::string_view expression); 
 };
