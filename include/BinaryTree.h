@@ -10,7 +10,7 @@ struct Token {
         BinOperator,
         Number,
         LeftBracket,
-        RightBraket,
+        RightBracket,
     };
     
     Type type;
@@ -28,7 +28,8 @@ private:
     Pointer right;
 
 public:
-    BinaryTree();
+    BinaryTree() = delete;
+    BinaryTree(const Token& token);
     BinaryTree(const BinaryTree& other);
     BinaryTree(BinaryTree&& other) noexcept;
     ~BinaryTree();

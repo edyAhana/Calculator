@@ -1,6 +1,9 @@
 #include "BinaryTree.h"
 
-BinaryTree::BinaryTree() = default;
+BinaryTree::BinaryTree(const Token& token)
+        : token(token)
+        , left(nullptr)
+        , right(nullptr) {}
 
 BinaryTree::BinaryTree(const BinaryTree& other)
         : token(other.token)
@@ -37,29 +40,17 @@ BinaryTree& BinaryTree::operator=(BinaryTree&& other) noexcept {
 }
 
 BinaryTree::Pointer BinaryTree::Left() noexcept {
-    if(!left) {
-        return std::shared_ptr<BinaryTree>();
-    }
     return left;
 }
 
 BinaryTree::Pointer BinaryTree::Right()  noexcept {
-    if(!right) {
-        return std::shared_ptr<BinaryTree>();
-    }
     return right;
 }
 
 const BinaryTree::Pointer BinaryTree::CLeft() const noexcept {
-    if(!left) {
-        return std::shared_ptr<BinaryTree>();
-    }
     return left;
 }
 
 const BinaryTree::Pointer BinaryTree::CRight() const noexcept {
-    if(!right) {
-        return std::shared_ptr<BinaryTree>();
-    }
     return right;
 }
