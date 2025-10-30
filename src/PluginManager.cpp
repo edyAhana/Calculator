@@ -48,3 +48,50 @@ void PluginManager::LoadPlugins(const Path& directory) {
     }
 }
 
+bool PluginManager::HasFunction(const std::string& func) {
+    return functionList.contains(func);
+}
+
+bool PluginManager::HasOperator(const std::string& op) {
+    return functionList.contains(op);
+}
+
+double PluginManager::CallFunction(const std::string& func, double lhs) {
+    return functionList[func](lhs);
+}
+
+double PluginManager::CallOperator(const std::string& func, double lhs, double rhs) {
+    return operatorList[func](lhs, rhs);
+}
+
+void PluginManager::RegistreFunction(const std::string& func) {
+    for(auto lib : libraryList) {
+        Function funcPtr = nullptr;
+#ifdef _WIN32
+        funcPtr = reinterpret_cast<Function>(GetProcAddres(lib, func.c_str()));
+#elif __linux__
+        funcPtr = reinterpret_cast<Function>(dlsym(lib, func.c_str()));
+#endif
+        if(funcPtr) {
+            functionList[func] = funcPtr;
+            return;
+        }
+    }
+    throw std::runtime_error("[ PluginManager ] no function called " + func + "\n");
+}
+
+void PluginManager::RegistreOperator(const std::string& op) {
+    for(auto lib : libraryList) {
+        Operator operPtr = nullptr;
+#ifdef _WIN32
+        operPtr = reinterpret_cast<Operator>(GetProcAddres(lib, op.c_str()));
+#elif __linux__
+        operPtr = reinterpret_cast<Operator>(dlsym(lib, op.c_str()));
+#endif
+        if(operPtr) {
+            operatorList[op] = operPtr;
+            return;
+        }
+    }
+    throw std::runtime_error("[ PluginManager ] no operator called " + op + "\n");
+}

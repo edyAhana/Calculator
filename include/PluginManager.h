@@ -5,24 +5,45 @@
 #include <vector>
 #include <functional>
 #include <string>
+#include <filesystem>
+#include <iostream>
+#include <exception>
+
+using Path = std::filesystem::path;
+namespace fs = std::filesystem;
+
+#ifdef _WIN32
+#include <windows.h>
+using LibraryHandle = HMODULE;
+#elif __linux__
+#include <dlfcn.h>
+using LibraryHandle = void*;
+#endif
 
 
 class PluginManager {
 private:
-    using function = std::function<double(const std::vector<double>&)>;
+    using Function = double (*) (double); 
+    using Operator = double (*) (double, double);
 
-    std::unordered_map<std::string, function> functionList; 
+    std::unordered_map<std::string, Function> functionList; 
+    std::unordered_map<std::string, Operator> operatorList;
+    std::vector<LibraryHandle> libraryList;
 
 public:
     PluginManager();
     ~PluginManager();
 
-    void LoadPlugins();
+    void LoadPlugins(const Path& directory);
 
-    bool HasFunction();
-    double CallFunction();
+    bool HasFunction(const std::string& func);
+    bool HasOperator(const std::string& op);
 
-    void RegistreFunction();
+    double CallFunction(const std::string& func, double lhs);
+    double CallOperator(const std::string& op, double lhs, double rhs);
+
+    void RegistreFunction(const std::string& func);
+    void RegistreOperator(const std::string& op);
 };
 
 
