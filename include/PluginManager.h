@@ -2,12 +2,14 @@
 #define PLUGIN_MANAGER_H
 
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <functional>
 #include <string>
 #include <filesystem>
 #include <iostream>
 #include <exception>
+
 
 using Path = std::filesystem::path;
 namespace fs = std::filesystem;
@@ -28,7 +30,8 @@ private:
 
     std::unordered_map<std::string, Function> functionList; 
     std::unordered_map<std::string, Operator> operatorList;
-    std::vector<LibraryHandle> libraryList;
+    std::unordered_set<std::string> libraryList;
+    std::vector<LibraryHandle> libraryDescriptors;
 
 public:
     PluginManager();
@@ -39,8 +42,8 @@ public:
     bool HasFunction(const std::string& func);
     bool HasOperator(const std::string& op);
 
-    double CallFunction(const std::string& func, double lhs);
-    double CallOperator(const std::string& op, double lhs, double rhs);
+    Function GetFunction(const std::string& func);
+    Operator GetOperator(const std::string& op);
 
     void RegistreFunction(const std::string& func);
     void RegistreOperator(const std::string& op);

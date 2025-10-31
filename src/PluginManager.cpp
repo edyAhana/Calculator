@@ -3,7 +3,7 @@
 PluginManager::PluginManager() = default;
 
 PluginManager::~PluginManager() {
-    for(auto lib : libraryList) {
+    for(auto lib : libraryDescriptors) {
 #ifdef _WIN32
         FreeLibrary(lib);
 #elif __linux
@@ -44,7 +44,8 @@ void PluginManager::LoadPlugins(const Path& directory) {
         }
 #endif
         std::cout << "[ PluginManager ] loaded plugin :" << path.filename().string() << "\n";
-        libraryList.push_back(handle);
+        libraryDescriptors.push_back(handle);
+        libraryList.insert(path.filename().string());
     }
 }
 
@@ -56,16 +57,22 @@ bool PluginManager::HasOperator(const std::string& op) {
     return functionList.contains(op);
 }
 
-double PluginManager::CallFunction(const std::string& func, double lhs) {
-    return functionList[func](lhs);
+PluginManager::Function PluginManager::GetFunction(const std::string& func) {
+    if(HasFunction(func)) {
+         return functionList[func];
+    }
+    return nullptr;
 }
 
-double PluginManager::CallOperator(const std::string& func, double lhs, double rhs) {
-    return operatorList[func](lhs, rhs);
+PluginManager::Operator PluginManager::GetOperator(const std::string& op) {
+    if(HasOperator(op)) {
+        return operatorList[op];
+    }
+    return nullptr;
 }
 
 void PluginManager::RegistreFunction(const std::string& func) {
-    for(auto lib : libraryList) {
+    for(auto lib : libraryDescriptors) {
         Function funcPtr = nullptr;
 #ifdef _WIN32
         funcPtr = reinterpret_cast<Function>(GetProcAddres(lib, func.c_str()));
@@ -77,11 +84,10 @@ void PluginManager::RegistreFunction(const std::string& func) {
             return;
         }
     }
-    throw std::runtime_error("[ PluginManager ] no function called " + func + "\n");
 }
 
 void PluginManager::RegistreOperator(const std::string& op) {
-    for(auto lib : libraryList) {
+    for(auto lib : libraryDescriptors) {
         Operator operPtr = nullptr;
 #ifdef _WIN32
         operPtr = reinterpret_cast<Operator>(GetProcAddres(lib, op.c_str()));
@@ -93,5 +99,4 @@ void PluginManager::RegistreOperator(const std::string& op) {
             return;
         }
     }
-    throw std::runtime_error("[ PluginManager ] no operator called " + op + "\n");
 }
