@@ -3,7 +3,8 @@
 
 #include <memory>
 #include <string>
-#include <exception>
+//#include <exception>
+#include <stdexcept>
 
 class IFunction {
 public:

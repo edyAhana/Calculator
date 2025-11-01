@@ -6,7 +6,7 @@
 #include "Executer.h"
 
 
-void print(BasicNode* node, std::size_t offset = 0);
+
 
 int main() {
     PluginManager pm;

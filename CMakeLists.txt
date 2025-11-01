@@ -16,6 +16,8 @@ add_executable(calculator
 
 add_subdirectory(plugins/basic_operators)
 
+
+
 set_target_properties(calculator PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
