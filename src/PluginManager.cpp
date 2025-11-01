@@ -20,7 +20,7 @@ void PluginManager::LoadPlugins(const Path& directory) {
 
         const auto path = entry.path();
 
-        if(libraryList.contains(path.filename())) {
+        if(libraryList.contains(path.filename().string())) {
             continue;
         }
 
@@ -30,9 +30,9 @@ void PluginManager::LoadPlugins(const Path& directory) {
             continue;
         }
         
-        handle = LoadLibraryA(path.string().c_str());
+        handle = LoadLibraryW(path.wstring().c_str());
         if(!handle) {
-            std::cerr << "[ PluginManager ] failed to open " << path << "\n";
+            std::cerr << "[ PluginManager ] failed to open " << path.filename() << "\n";
             continue;
         }
 #elif __linux__
@@ -47,7 +47,7 @@ void PluginManager::LoadPlugins(const Path& directory) {
             continue;
         }
 #endif
-        std::cout << "[ PluginManager ] load plugin :" << path.filename().string() << "\n";
+        std::cout << "[ PluginManager ] load plugin " << path.filename() << "\n";
         libraryDescriptors.push_back(handle);
         libraryList.insert(path.filename().string());
     }
@@ -83,9 +83,9 @@ void PluginManager::RegistreFunction(const std::string& func) {
     for(auto lib : libraryDescriptors) {
         Function funcPtr = nullptr;
 #ifdef _WIN32
-        funcPtr = reinterpret_cast<Function>(GetProcAddres(lib, nameMap(func).c_str()));
+        funcPtr = reinterpret_cast<Function>(GetProcAddress(lib, (nameMap(func) + "_plugin").c_str()));
 #elif __linux__
-        funcPtr = reinterpret_cast<Function>(dlsym(lib,nameMap(func).c_str()));
+        funcPtr = reinterpret_cast<Function>(dlsym(lib, (nameMap(func) + "_plugin").c_str()));
 #endif
         if(funcPtr) {
             functionList[func] = funcPtr;
@@ -102,9 +102,9 @@ void PluginManager::RegistreOperator(const std::string& op) {
     for(auto lib : libraryDescriptors) {
         Operator operPtr = nullptr;
 #ifdef _WIN32
-        operPtr = reinterpret_cast<Operator>(GetProcAddres(lib, nameMap(op).c_str()));
+        operPtr = reinterpret_cast<Operator>(GetProcAddress(lib, (nameMap(op) + "_plugin").c_str()));
 #elif __linux__
-        operPtr = reinterpret_cast<Operator>(dlsym(lib, nameMap(op).c_str()));
+        operPtr = reinterpret_cast<Operator>(dlsym(lib, (nameMap(op) + "_plugin").c_str()));
 #endif
         if(operPtr) {
             operatorList[op] = operPtr;

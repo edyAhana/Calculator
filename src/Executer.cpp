@@ -7,11 +7,13 @@ double Executer::execute(PluginManager& pm, const std::unique_ptr<BasicNode>& ex
     if(auto ptr = dynamic_cast<NumberNode*>(raw_ptr)) {
         res = ptr->value;
     } else if(auto ptr = dynamic_cast<BinaryOperatorNode*>(raw_ptr)) {
-        pm.RegistreOperator(ptr->Name());
+        std::string name = ptr->Name();
 
-        if(pm.HasOperator(ptr->Name())) {
+        pm.RegistreOperator(name);
+
+        if(pm.HasOperator(name)) {
             ptr->setFunction(
-                std::make_unique<IBinaryOperator>(pm.GetOperator(ptr->Name()))
+                std::make_unique<IBinaryOperator>(pm.GetOperator(name))
             );
         }
 
