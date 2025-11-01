@@ -59,7 +59,6 @@ public:
 
     double exec(double lhs, double rhs = 0) const {
         if(!func) {
-            
             throw std::runtime_error("[FunctionWrapper] need to specify function");
         }
     

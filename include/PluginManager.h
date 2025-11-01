@@ -33,6 +33,8 @@ private:
     std::unordered_set<std::string> libraryList;
     std::vector<LibraryHandle> libraryDescriptors;
 
+    std::string nameMap(const std::string& name);
+
 public:
     PluginManager();
     ~PluginManager();

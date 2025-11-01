@@ -20,6 +20,10 @@ void PluginManager::LoadPlugins(const Path& directory) {
 
         const auto path = entry.path();
 
+        if(libraryList.contains(path.filename())) {
+            continue;
+        }
+
         LibraryHandle handle = nullptr;
 #ifdef _WIN32
         if(path.extension() != ".dll") {
@@ -43,7 +47,7 @@ void PluginManager::LoadPlugins(const Path& directory) {
             continue;
         }
 #endif
-        std::cout << "[ PluginManager ] loaded plugin :" << path.filename().string() << "\n";
+        std::cout << "[ PluginManager ] load plugin :" << path.filename().string() << "\n";
         libraryDescriptors.push_back(handle);
         libraryList.insert(path.filename().string());
     }
@@ -54,7 +58,7 @@ bool PluginManager::HasFunction(const std::string& func) {
 }
 
 bool PluginManager::HasOperator(const std::string& op) {
-    return functionList.contains(op);
+    return operatorList.contains(op);
 }
 
 PluginManager::Function PluginManager::GetFunction(const std::string& func) {
@@ -72,12 +76,16 @@ PluginManager::Operator PluginManager::GetOperator(const std::string& op) {
 }
 
 void PluginManager::RegistreFunction(const std::string& func) {
+    if(HasFunction(func)) {
+        return;
+    }
+
     for(auto lib : libraryDescriptors) {
         Function funcPtr = nullptr;
 #ifdef _WIN32
-        funcPtr = reinterpret_cast<Function>(GetProcAddres(lib, func.c_str()));
+        funcPtr = reinterpret_cast<Function>(GetProcAddres(lib, nameMap(func).c_str()));
 #elif __linux__
-        funcPtr = reinterpret_cast<Function>(dlsym(lib, func.c_str()));
+        funcPtr = reinterpret_cast<Function>(dlsym(lib,nameMap(func).c_str()));
 #endif
         if(funcPtr) {
             functionList[func] = funcPtr;
@@ -87,12 +95,16 @@ void PluginManager::RegistreFunction(const std::string& func) {
 }
 
 void PluginManager::RegistreOperator(const std::string& op) {
+    if(HasOperator(op)) {
+        return;
+    }
+    
     for(auto lib : libraryDescriptors) {
         Operator operPtr = nullptr;
 #ifdef _WIN32
-        operPtr = reinterpret_cast<Operator>(GetProcAddres(lib, op.c_str()));
+        operPtr = reinterpret_cast<Operator>(GetProcAddres(lib, nameMap(op).c_str()));
 #elif __linux__
-        operPtr = reinterpret_cast<Operator>(dlsym(lib, op.c_str()));
+        operPtr = reinterpret_cast<Operator>(dlsym(lib, nameMap(op).c_str()));
 #endif
         if(operPtr) {
             operatorList[op] = operPtr;
@@ -100,3 +112,19 @@ void PluginManager::RegistreOperator(const std::string& op) {
         }
     }
 }
+
+std::string PluginManager::nameMap(const std::string& name) {
+    if(name == "+") {
+        return "add";
+    } else if(name == "-") {
+        return "minus";
+    } else if(name == "*") {
+        return "mult";
+    } else if(name == "/") {
+        return "dev";
+    } else if(name == "^") {
+        return "deg";
+    } 
+
+    return name;
+} 
