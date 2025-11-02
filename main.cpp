@@ -14,6 +14,7 @@ int main() {
     bool isExit = false;
 
     while(!isExit) {
+        pm.LoadPlugins("./plugins");
         std::string expression;
         std::cout << "\nenter the expression:\n";
         std::cout << "<<< ";
